@@ -251,6 +251,7 @@ print("===================creating input table==================================
 print_table_records("Product")
 print_table_records("Stock")
 print_table_records("Depot")
+print()
 print("==================== Transaction 5: Delete product================================================")
 delete_product("p1")
 print_table_records("Product")
