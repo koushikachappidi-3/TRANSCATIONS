@@ -2,7 +2,7 @@ import psycopg2
 from dbConfig import DB_CONFIG
 from dbConfig import DB_NAME
 
-# Function to execute transactions
+# Function to run a database query (transaction)
 def execute_transaction(query, params=None):
     try:
         # Establish connection
@@ -169,28 +169,6 @@ def update_depot_and_stock(dep, addr, volume, prod, quantity):
     """
     execute_transaction(query, (dep, addr, volume, prod, dep, quantity))
 
-# def update_product_and_stock(prod, pname, price, dep, quantity):
-#     query = """
-#     BEGIN;
-#     INSERT INTO Product (prod, pname, price) VALUES (%s, %s, %s)
-#     ON CONFLICT (prod) DO UPDATE SET pname = EXCLUDED.pname, price = EXCLUDED.price;
-#     INSERT INTO Stock (prod, dep, quantity) VALUES (%s, %s, %s)
-#     ON CONFLICT (prod, dep) DO UPDATE SET quantity = EXCLUDED.quantity;
-#     COMMIT;
-#     """
-#     execute_transaction(query, (prod, pname, price, prod, dep, quantity))
-#
-# # Function to add or update a depot and its stock
-# def update_depot_and_stock(dep, addr, volume, prod, quantity):
-#     query = """
-#     BEGIN;
-#     INSERT INTO Depot (dep, addr, volume) VALUES (%s, %s, %s)
-#     ON CONFLICT (dep) DO UPDATE SET addr = EXCLUDED.addr, volume = EXCLUDED.volume;
-#     INSERT INTO Stock (prod, dep, quantity) VALUES (%s, %s, %s)
-#     ON CONFLICT (prod, dep) DO UPDATE SET quantity = EXCLUDED.quantity;
-#     COMMIT;
-#     """
-#     execute_transaction(query, (dep, addr, volume, prod, dep, quantity))
 
 def print_table_records(table):
     try:
@@ -222,14 +200,21 @@ print_table_records("Stock")
 print_table_records("Depot")
 print()
 
-print("=================== Transaction 1: Update product and stock=================================================")
-update_product_and_stock("p100", "cd", 5, "d2", 50)
+
+print("==================== Transaction 1: Delete product================================================")
+delete_product("p1")
 print_table_records("Product")
 print_table_records("Stock")
 print()
 
-print("==================== Transaction 2: Update depot and stock================================================")
-update_depot_and_stock("d100", "Chicago", 100, "p1", 100)
+print("==================== Transaction 2: Delete depot================================================")
+delete_depot("d1")
+print_table_records("Depot")
+print_table_records("Stock")
+
+create_and_populate_database()
+print("===================creating input table=================================================")
+print_table_records("Product")
 print_table_records("Stock")
 print_table_records("Depot")
 print()
@@ -247,18 +232,23 @@ print_table_records("Stock")
 print()
 
 create_and_populate_database()
-print("===================creating input table=================================================")
+print("===================Given input table=================================================")
 print_table_records("Product")
 print_table_records("Stock")
 print_table_records("Depot")
-print()
-print("==================== Transaction 5: Delete product================================================")
-delete_product("p1")
+
+print("=================== Transaction 5: Update product and stock=================================================")
+update_product_and_stock("p100", "cd", 5, "d2", 50)
 print_table_records("Product")
 print_table_records("Stock")
+print()
+#
+print("==================== Transaction 6: Update depot and stock================================================")
+update_depot_and_stock("d100", "Chicago", 100, "p1", 100)
+print_table_records("Stock")
+print_table_records("Depot")
 print()
 
-print("==================== Transaction 6: Delete depot================================================")
-delete_depot("d1")
-print_table_records("Depot")
-print_table_records("Stock")
+
+
+
